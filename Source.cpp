@@ -1,308 +1,327 @@
-
 #include <iostream>
 using namespace std;
 
-class Complex {
-
-private:
-    double real;
-
-
-public:
-    Complex() {
-        real = 0;
-    }
-
-    Complex(double real) {
-        this->real = real;
-    }
-
-    Complex(const Complex& other) {
-        this->real = other.real;
-    }
-
-    Complex operator + (const Complex& other) const {
-        return { this->real + other.real };
-    }
-
-    Complex operator - (const Complex& other) const {
-        return { this->real - other.real };
-    }
-    Complex operator ++ (int) {
-        return { real++ };
-    }
-    Complex operator -- (int) {
-        return { real-- };
-    }
-
-    Complex& operator ++ () {
-        real++;
-        return *this;
-    }
-    Complex& operator -- () {
-        real--;
-        return *this;
-    }
-
-    friend bool operator !=(const Complex& first, const Complex& second)
-    {
-        return first.getReal() != second.getReal();
-    }
-
-    double getReal() const {
-        return real;
-    }
-    void setReal(double reall) {
-        Complex::real = reall;
-    }
-
-    friend class ComplexMatrix;
-    friend ostream& operator << (ostream& out, const Complex& a);
-    operator int() const { return (int)this->real; };
-    operator double() const { return (double)this->real; };
-    ~Complex() = default;
-};
-ostream& operator << (ostream& out, const Complex& a) {
-    out << "Real: " << a.real << endl;
-    return out;
-}
-
-class ComplexMatrix {
-
-private:
-    Complex matrix[10][10];
-    int size;
+class Computer {
 public:
 
-    ComplexMatrix() {
-        size = 9;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                matrix[i][j].real = 0;
-            }
-        }
+    Computer(int ReleaseDate = 0, string Manufacturer = "Manufacturer not entered", double Cost = 0.0) : ReleaseDate(ReleaseDate), Manufacturer(Manufacturer), Cost(Cost) {
     }
 
-    explicit ComplexMatrix(int size) {
-        this->size = size - 1;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                cout << "[" << i + 1 << "][" << j + 1 << "]real:";   cin >> matrix[i][j].real;
-                cout << endl;
-            }
-
-        }
+    Computer(Computer& other) {
+        this->ReleaseDate = other.ReleaseDate;
+        this->Manufacturer = other.Manufacturer;
+        this->Cost = other.Cost;
     }
 
-    ComplexMatrix(int size, int flag) {
-        this->size = size - 1;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                matrix[i][j].real = 0;
-                cout << endl;
-            }
-
-        }
+    int getReleaseDate() const {
+        return ReleaseDate;
     }
 
-    ComplexMatrix operator + (const ComplexMatrix& other) {
-        ComplexMatrix temp;
-
-        for (int i = 0; i <= size; i++) {
-            for (int j = 0; j <= size; j++) {
-                temp[i][j] = this->matrix[i][j] + other.matrix[i][j];
-            }
-        }
-        return temp;
+    void setReleaseDate(int releaseDate) {
+        ReleaseDate = releaseDate;
     }
 
-    ComplexMatrix operator - (const ComplexMatrix& other) {
-        ComplexMatrix temp;
-
-        for (int i = 0; i <= size; i++) {
-            for (int j = 0; j <= size; j++) {
-                temp[i][j] = this->matrix[i][j] - other.matrix[i][j];
-            }
-        }
-        return temp;
+    const string& getManufacturer() const {
+        return Manufacturer;
     }
 
-
-    ComplexMatrix operator ++ (int) const {
-        ComplexMatrix temp;
-
-        for (int i = 0; i <= size; i++) {
-            for (int j = 0; j <= size; j++) {
-                temp[i][j]++;
-            }
-        }
-        return temp;
+    void setManufacturer(const string& manufacturer) {
+        Manufacturer = manufacturer;
     }
 
-    ComplexMatrix operator -- (int) const {
-        ComplexMatrix temp;
-
-        for (int i = 0; i <= size; i++) {
-            for (int j = 0; j <= size; j++) {
-                temp[i][j]--;
-            }
-        }
-        return temp;
+    double getCost() const {
+        return Cost;
     }
 
-
-    Complex* operator [](const int index)
+    void setCost(double cost) {
+        Computer::Cost = cost;
+    }
+    double inputSMTH(double cost)// проверка на ввод
     {
-        return matrix[index];
-    }
-
-    friend bool operator ==(const ComplexMatrix& first, const ComplexMatrix& second)
-    {
-        bool equal = true;
-        for (int i = 0; i <= first.size; i++)
         {
-            for (int j = 0; j <= first.size; j++)
+            while (true)
             {
-                if (first.matrix[i][j] != second.matrix[i][j])
-                    equal = false;
+                rewind(stdin);
+                if ((cin >> cost) && cost >= 1 && !cin.fail())
+                    break;
+                cin.clear();
+                cin.ignore(32767, '\n');
             }
-        }
-        return equal;
-    }
-
-    ComplexMatrix operator = (const ComplexMatrix& other) {
-        ComplexMatrix temp;
-
-        for (int i = 0; i <= size; i++) {
-            for (int j = 0; j <= size; j++) {
-                temp[i][j] = this->matrix[i][j] = other.matrix[i][j];
-            }
-        }
-        return temp;
-    }
-
-    
-        void PrintMatrix(int sizeToPrint) {
-        for (int i = 0; i <= sizeToPrint - 1; i++) {
-            cout << endl;
-            for (int j = 0; j <= sizeToPrint - 1; j++) {
-                cout << "[" << i + 1 << "][" << j + 1 << "] = " << matrix[i][j].real;
-            }
+            return (cost);
         }
     }
+    virtual void output() {
+        cout << "ReleaseDate: " << ReleaseDate
+            << endl << "Manufacturer: " << Manufacturer
+            << endl << "Cost: " << Cost << "$"
+            << endl;
+    }
+
+    ~Computer() = default;
+
+protected:
+    double Cost;
+    int ReleaseDate;
+    string Manufacturer;
 };
 
+class Inside : virtual public Computer {
+private:
 
-void menuChoice() {
-    cout << endl << endl << "1. Choose operation to do with matrix" << endl << "2. Show source matrix" << endl << "3. exit" << endl;
-}
-void optionToDo() {
-    cout << endl << "Operations with matrix: "
-        << endl << "1. +"
-        << endl << "2. -"
-        << endl << "3. ++(postfix) /for complex number"
-        << endl << "4. --(postfix) /for complex number"
-        << endl << "5. operator <<"
-        << endl << "6. == "
-        << endl << "7. = "
-        << endl << "8. from double to int"
-        << endl << endl;
-}
+    string InsideCriteria = "InsideCriteria";
+
+public:
+
+    Inside(int ReleaseDate, string Manufacturer, double Cost, int CoresNumber = 0)
+        : Computer(ReleaseDate, Manufacturer, Cost), CoresNumber(CoresNumber) {
+
+    }
+
+    const string& getInsideCriteria() const {
+        return InsideCriteria;
+    }
+
+    void setInsideCriteria(const string& insideCriteria) {
+        InsideCriteria = insideCriteria;
+    }
+
+    int getCoresNumber() const {
+        return CoresNumber;
+    }
+
+    void setCoresNumber(int coresNumber) {
+        CoresNumber = coresNumber;
+    }
+
+    virtual void output() {
+        cout << "ReleaseDate: " << ReleaseDate
+            << endl << "Manufacturer: " << Manufacturer
+            << endl << "Cost: " << Cost << "$"
+            << endl << "******************"
+            << endl << InsideCriteria
+            << endl
+            << "CoresNumber: " << CoresNumber
+            << endl;
+    }
+
+    ~Inside() = default;
+
+protected:
+    int CoresNumber;
+};
+
+class Outside : virtual public Computer {
+private:
+
+    string OutsideCriteria = "OutsideCriteria";
+
+public:
+
+    Outside(int ReleaseDate, string Manufacturer, double Cost, string ScreenResolution)
+        : Computer(ReleaseDate, Manufacturer, Cost), ScreenResolution(ScreenResolution) {
+
+    }
+
+    const string& getOutsideCriteria() const {
+        return OutsideCriteria;
+    }
+
+    void setOutsideCriteria(const string& outsideCriteria) {
+        OutsideCriteria = outsideCriteria;
+    }
+
+    string getScreenResolution() const {
+        return ScreenResolution;
+    }
+
+    void setScreenResolution(string screenResolution) {
+        ScreenResolution = screenResolution;
+    }
+
+    virtual void output() override {
+        cout << "ReleaseDate: " << ReleaseDate
+            << endl << "Manufacturer: " << Manufacturer
+            << endl << "Cost: " << Cost << "$"
+            << endl << "******************"
+            << endl << OutsideCriteria
+            << endl
+            << "ScreenResolution: " << ScreenResolution
+            << endl;
+    }
+
+    ~Outside() = default;
+
+protected:
+
+    string ScreenResolution;
+
+};
+
+class InsideDates : virtual public Inside {
+public:
+
+    InsideDates(int ReleaseDate, string Manufacturer, double Cost, int CoresNumber, int RAM = 0)
+        : Computer(ReleaseDate, Manufacturer, Cost),
+        Inside(ReleaseDate, Manufacturer, CoresNumber), RAM(RAM) {
+
+    }
+
+    int getRAM() const {
+        return RAM;
+    }
+
+    void setRAM(double ram) {
+        RAM = ram;
+    }
+
+    virtual void output() override {
+        cout << "ReleaseDate: " << ReleaseDate
+            << endl << "Manufacturer: " << Manufacturer
+            << endl << "Cost: " << Cost << "$"
+            << endl << "******************"
+            << endl << getInsideCriteria()
+            << endl
+            << "CoresNumber: " << CoresNumber
+            << endl << "RAM: " << RAM << " GB"
+            << endl;
+    }
+
+    ~InsideDates() = default;
+
+protected:
+
+    int RAM;
+};
+
+class OutsideDates : virtual public Outside {
+public:
+
+    OutsideDates(int ReleaseDate, string Manufacturer, double Cost, string ScreenResolution, double ScreenInchSize = 13.0)
+        : Computer(ReleaseDate, Manufacturer, Cost),
+        Outside(ReleaseDate, Manufacturer, Cost, ScreenResolution), MonitorDiameter(MonitorDiameter) {
+
+    }
+
+    double getMonitorDiameter() const {
+        return MonitorDiameter;
+    }
+
+    void setMonitorDiameter(double monitorDiameter) {
+        MonitorDiameter = monitorDiameter;
+    }
+
+    virtual void output() override {
+        cout << "ReleaseDate: " << ReleaseDate
+            << endl << "Manufacturer: " << Manufacturer
+            << endl << "Cost: " << Cost << "$"
+            << endl << "******************"
+            << endl << getOutsideCriteria()
+            << endl << "ScreenResolution: " << ScreenResolution
+            << endl << "Monitor size: " << MonitorDiameter << " dm"
+            << endl;
+    }
+
+    ~OutsideDates() = default;
+
+protected:
+
+    double MonitorDiameter;
+};
+
+class SetInformation : public InsideDates, public OutsideDates {
+public:
+
+    SetInformation(SetInformation& other) : OutsideDates(other), InsideDates(other), Outside(other), Inside(other), Computer(other) {
+        this->ReleaseDate = other.ReleaseDate;
+        this->Manufacturer = other.Manufacturer;
+        this->Cost = other.Cost;
+        this->CoresNumber = other.CoresNumber;
+        this->ScreenResolution = other.ScreenResolution;
+        this->RAM = other.RAM;
+        this->MonitorDiameter = other.MonitorDiameter;
+        this->Color = other.Color;
+    }
+
+    SetInformation(int ReleaseDate = 0, string Manufacturer = "Not entered", double Cost = 10.0, int CoresNumber = 5, string ScreenResolution = "4k", int RAM = 0, double MonitorDiameter = 13.0, string Color = "enter color please")
+        : Computer(ReleaseDate, Manufacturer, Cost),
+        Inside(ReleaseDate, Manufacturer, Cost, CoresNumber),
+        Outside(ReleaseDate, Manufacturer, Cost, ScreenResolution),
+        InsideDates(ReleaseDate, Manufacturer, Cost, CoresNumber, RAM),
+        OutsideDates(ReleaseDate, Manufacturer, Cost, ScreenResolution, MonitorDiameter), Color(Color) {
+
+    }
+
+    string getColor() const {
+        return Color;
+    }
+
+    void setColor(string color) {
+        Color = color;
+    }
+
+    void inputData() {
+        cout << endl << "Enter ReleaseDate: ";
+        cin >> ReleaseDate;
+        cout << endl << "Enter Cost: ";
+        Cost = inputSMTH(Cost);
+        cout << endl << "Enter Manufacturer: ";
+        cin >> Manufacturer;
+        cout << endl << "Enter CoresNumber: ";
+        CoresNumber = inputSMTH(CoresNumber);
+        cout << endl << "Enter Screen Resolution: ";
+        cin >> ScreenResolution;
+        cout << endl << "Enter RAM: ";
+        RAM = inputSMTH(RAM);
+        cout << endl << "Enter Monitor Size: ";
+        MonitorDiameter = inputSMTH(MonitorDiameter);
+        cout << endl << "Enter Color: ";
+        cin >> Color;
+        cout << endl;
+    }
+
+    virtual void output() override {
+        cout << "ReleaseDate: " << ReleaseDate
+            << endl << "Manufacturer: " << Manufacturer
+            << endl << "Cost: " << Cost << "$"
+            << endl << "******************"
+            << endl << getInsideCriteria()
+            << endl
+            << "CoresNumber: " << CoresNumber
+            << endl << "RAM: " << RAM << " GB"
+            << endl << "******************"
+            << endl << getOutsideCriteria()
+            << endl << "ScreenResolution: " << ScreenResolution
+            << endl << "Monitor size: " << MonitorDiameter << " dm"
+            << endl << "Color: " << Color
+            << endl;
+    }
+
+    virtual ~SetInformation() {
+        //cout << "Destructor was activated" << endl;
+    };
+
+protected:
+    string Color;
+};
 
 int main() {
 
-    int size;
-    cout << "Enter the size of matrix: ";
-    cin >> size;
-    cout << "Input of matrix 1" << endl;
-    ComplexMatrix matrix1(size);
+    int Number = 0;
+    char* Massiv;
+    cout << "Enter number of computers please: ";
+    cin >> Number;
 
-    cout << "Matrix 1:" << endl << endl;
-    matrix1.PrintMatrix(size);
+    SetInformation* num = new SetInformation[Number]();
 
-    cout << endl << endl << "Input of matrix 2" << endl;
-    ComplexMatrix matrix2(size);
+    for (int i = 0; i < Number; i++) {
+        cout << "Enter Data for number" << i << ":" << endl;
+        num[i].inputData();
+    }
 
-    cout << endl << endl << "Matrix 2:" << endl << endl;
-    matrix2.PrintMatrix(size);
-    Complex complexShow(5);
-    ComplexMatrix resultMatrixSum(size, 1);
-    ComplexMatrix resultMatrixExtract(size, 1);
-    ComplexMatrix resultMatrixRavno(size, 1);
-    Complex  result(3.4);
-    int menuchoice = 0;
+    for (int i = 0; i < Number; i++) {
+        cout << endl << endl << "number" << i << ":" << endl;
+        num[i].output();
+    }
 
-    do {
-        menuChoice();
-        cin >> menuchoice;
-        Complex a(2), b(1), c, number(10);
-        switch (menuchoice) {
-        case 1:
-            optionToDo();
-            int optiontodo; cin >> optiontodo;
-
-            switch (optiontodo) {
-            case 1:
-                resultMatrixSum = matrix1 + matrix2;
-                cout << endl << "Result matrix:" << endl << endl;
-                resultMatrixSum.PrintMatrix(size);
-                break;
-
-            case 2:
-                resultMatrixExtract = matrix1 - matrix2;
-                cout << endl << "Result matrix:" << endl << endl;
-                resultMatrixExtract.PrintMatrix(size);
-                break;
-
-            case 3:
-                cout << "ComplexNumber: " << complexShow << endl;
-                cout << "ComplexNumber++" << endl;
-                complexShow++;
-                cout << "ComplexNumber: " << complexShow << endl;
-                break;
-
-            case 4:
-                cout << "ComplexNumber: " << complexShow << endl;
-                cout << "ComplexNumber--" << endl;
-                complexShow--;
-                cout << "ComplexNumber: " << complexShow << endl;
-                break;
-
-            case 5:
-                cout << "Example of overloading << :" << endl;
-                cout << number << endl;
-                break;
-            case 6:
-                if (matrix1 == matrix2)
-                    cout << "The same\n";
-                else
-                    cout << "Not the same\n";
-                break;
-            case 7:
-                matrix1 = matrix2;
-                resultMatrixRavno = matrix1;
-                cout << endl << "Result matrix:" << endl << endl;
-                resultMatrixRavno.PrintMatrix(size);
-                break;
-            case 8:
-                cout << "ComplexNumber: " << result << endl;
-                cout << "ComplexNumber(int)" << endl;
-                (int)result;
-                cout << "ComplexNumber: " << (int)result << endl;
-                break;
-            default:
-                break;
-            }
-            break;
-        case 2:
-            cout << "Matrix 1:" << endl << endl;
-            matrix1.PrintMatrix(size);
-            cout << endl << endl << "Matrix 2:" << endl << endl;
-            matrix2.PrintMatrix(size);
-            break;
-        default:
-            break;
-        }
-    } while (menuchoice != 3);
     return 0;
 }
