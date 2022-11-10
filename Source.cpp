@@ -1,187 +1,308 @@
+
 #include <iostream>
-#include <string>
+using namespace std;
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::string;
+class Complex {
 
-class Sto; // дружественный класс
-class Automobile
-{
 private:
-    double mileage;// пробег
-    string name;// имя владельца
-    int id;
+    double real;
+
 
 public:
-    friend void printInfo(Automobile& automobile); // дружественная функция вывода всей информации 
-    friend class Sto;// дружественный класс СТО
+    Complex() {
+        real = 0;
+    }
 
-    Automobile(const int _id, const string _name, const double _mileage) {
-        id = _id;
-        name = _name;
-        mileage = _mileage;
-    }; // конструктор инициализации
+    Complex(double real) {
+        this->real = real;
+    }
+
+    Complex(const Complex& other) {
+        this->real = other.real;
+    }
+
+    Complex operator + (const Complex& other) const {
+        return { this->real + other.real };
+    }
+
+    Complex operator - (const Complex& other) const {
+        return { this->real - other.real };
+    }
+    Complex operator ++ (int) {
+        return { real++ };
+    }
+    Complex operator -- (int) {
+        return { real-- };
+    }
+
+    Complex& operator ++ () {
+        real++;
+        return *this;
+    }
+    Complex& operator -- () {
+        real--;
+        return *this;
+    }
+
+    friend bool operator !=(const Complex& first, const Complex& second)
+    {
+        return first.getReal() != second.getReal();
+    }
+
+    double getReal() const {
+        return real;
+    }
+    void setReal(double reall) {
+        Complex::real = reall;
+    }
+
+    friend class ComplexMatrix;
+    friend ostream& operator << (ostream& out, const Complex& a);
+    operator int() const { return (int)this->real; };
+    operator double() const { return (double)this->real; };
+    ~Complex() = default;
+};
+ostream& operator << (ostream& out, const Complex& a) {
+    out << "Real: " << a.real << endl;
+    return out;
+}
+
+class ComplexMatrix {
+
+private:
+    Complex matrix[10][10];
+    int size;
+public:
+
+    ComplexMatrix() {
+        size = 9;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                matrix[i][j].real = 0;
+            }
+        }
+    }
+
+    explicit ComplexMatrix(int size) {
+        this->size = size - 1;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                cout << "[" << i + 1 << "][" << j + 1 << "]real:";   cin >> matrix[i][j].real;
+                cout << endl;
+            }
+
+        }
+    }
+
+    ComplexMatrix(int size, int flag) {
+        this->size = size - 1;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                matrix[i][j].real = 0;
+                cout << endl;
+            }
+
+        }
+    }
+
+    ComplexMatrix operator + (const ComplexMatrix& other) {
+        ComplexMatrix temp;
+
+        for (int i = 0; i <= size; i++) {
+            for (int j = 0; j <= size; j++) {
+                temp[i][j] = this->matrix[i][j] + other.matrix[i][j];
+            }
+        }
+        return temp;
+    }
+
+    ComplexMatrix operator - (const ComplexMatrix& other) {
+        ComplexMatrix temp;
+
+        for (int i = 0; i <= size; i++) {
+            for (int j = 0; j <= size; j++) {
+                temp[i][j] = this->matrix[i][j] - other.matrix[i][j];
+            }
+        }
+        return temp;
+    }
+
+
+    ComplexMatrix operator ++ (int) const {
+        ComplexMatrix temp;
+
+        for (int i = 0; i <= size; i++) {
+            for (int j = 0; j <= size; j++) {
+                temp[i][j]++;
+            }
+        }
+        return temp;
+    }
+
+    ComplexMatrix operator -- (int) const {
+        ComplexMatrix temp;
+
+        for (int i = 0; i <= size; i++) {
+            for (int j = 0; j <= size; j++) {
+                temp[i][j]--;
+            }
+        }
+        return temp;
+    }
+
+
+    Complex* operator [](const int index)
+    {
+        return matrix[index];
+    }
+
+    friend bool operator ==(const ComplexMatrix& first, const ComplexMatrix& second)
+    {
+        bool equal = true;
+        for (int i = 0; i <= first.size; i++)
+        {
+            for (int j = 0; j <= first.size; j++)
+            {
+                if (first.matrix[i][j] != second.matrix[i][j])
+                    equal = false;
+            }
+        }
+        return equal;
+    }
+
+    ComplexMatrix operator = (const ComplexMatrix& other) {
+        ComplexMatrix temp;
+
+        for (int i = 0; i <= size; i++) {
+            for (int j = 0; j <= size; j++) {
+                temp[i][j] = this->matrix[i][j] = other.matrix[i][j];
+            }
+        }
+        return temp;
+    }
+
     
-    Automobile() {
-        id = 0;
-        name = "Not entered";
-        mileage = 0;
-    };
-    ~Automobile() {
-        name.clear();
-    }; // деструктор
-
-    void setId(const int _id);// установка id
-    void setName(const string _name);// установка именри
-    friend int checkNumber(Automobile* car, int carNumber); // функция проверки на ввод номера автомобиля из списка
-};
-
-
-void Automobile::setName(const string _name)
-{
-    name = _name;
-}
-void Automobile::setId(const int _id)
-{
-    id = _id;
-}
-
-class Sto
-{
-public:
-    void setMileage(Automobile& car, const double _mileage)
-    {
-        //cout << car.id << ": " << car.mileage << endl;// плохо
-        car.mileage = _mileage; // установка пробега
-        //cout << car.id << ": " << car.mileage << endl;// хорошо
-    }
-    ~Sto() {};
-};
-
-void printInfo(Automobile& automobile)
-{
-    cout << "-----------------------------" << endl;
-    cout << "id - " << automobile.id << endl // вывод id
-        << "Name - " << automobile.name << endl // вывод имени владельца
-        << "mileage - " << automobile.mileage << endl; // вывод пробега
-    cout << "-----------------------------" << endl;
-}
-
-double inputMileage(double _mileage)// проверка на ввод
-{
-    {
-        while (true)
-        {
-            rewind(stdin);
-            if ((cin >> _mileage) && _mileage >= 1 && !cin.fail())
-                break;
-            cin.clear();
-            cin.ignore(32767, '\n');
+        void PrintMatrix(int sizeToPrint) {
+        for (int i = 0; i <= sizeToPrint - 1; i++) {
+            cout << endl;
+            for (int j = 0; j <= sizeToPrint - 1; j++) {
+                cout << "[" << i + 1 << "][" << j + 1 << "] = " << matrix[i][j].real;
+            }
         }
-        return (_mileage);
     }
+};
+
+
+void menuChoice() {
+    cout << endl << endl << "1. Choose operation to do with matrix" << endl << "2. Show source matrix" << endl << "3. exit" << endl;
+}
+void optionToDo() {
+    cout << endl << "Operations with matrix: "
+        << endl << "1. +"
+        << endl << "2. -"
+        << endl << "3. ++(postfix) /for complex number"
+        << endl << "4. --(postfix) /for complex number"
+        << endl << "5. operator <<"
+        << endl << "6. == "
+        << endl << "7. = "
+        << endl << "8. from double to int"
+        << endl << endl;
 }
 
-int main()
-{
-    int carNumber = 0; // количество машин которые мы хотим иметь в списке
+int main() {
 
-    while (true)
-    {
-        cout << "Please, enter a number of the automobiles: ";
-        fflush(stdin); // если число отрицательное вводим заново
-        cin >> carNumber; // ввод количества машин и присваивание этого значения в carNum
-        if (carNumber > 0) // проверка на ввод (что число положительное и не равно 0)
+    int size;
+    cout << "Enter the size of matrix: ";
+    cin >> size;
+    cout << "Input of matrix 1" << endl;
+    ComplexMatrix matrix1(size);
+
+    cout << "Matrix 1:" << endl << endl;
+    matrix1.PrintMatrix(size);
+
+    cout << endl << endl << "Input of matrix 2" << endl;
+    ComplexMatrix matrix2(size);
+
+    cout << endl << endl << "Matrix 2:" << endl << endl;
+    matrix2.PrintMatrix(size);
+    Complex complexShow(5);
+    ComplexMatrix resultMatrixSum(size, 1);
+    ComplexMatrix resultMatrixExtract(size, 1);
+    ComplexMatrix resultMatrixRavno(size, 1);
+    Complex  result(3.4);
+    int menuchoice = 0;
+
+    do {
+        menuChoice();
+        cin >> menuchoice;
+        Complex a(2), b(1), c, number(10);
+        switch (menuchoice) {
+        case 1:
+            optionToDo();
+            int optiontodo; cin >> optiontodo;
+
+            switch (optiontodo) {
+            case 1:
+                resultMatrixSum = matrix1 + matrix2;
+                cout << endl << "Result matrix:" << endl << endl;
+                resultMatrixSum.PrintMatrix(size);
+                break;
+
+            case 2:
+                resultMatrixExtract = matrix1 - matrix2;
+                cout << endl << "Result matrix:" << endl << endl;
+                resultMatrixExtract.PrintMatrix(size);
+                break;
+
+            case 3:
+                cout << "ComplexNumber: " << complexShow << endl;
+                cout << "ComplexNumber++" << endl;
+                complexShow++;
+                cout << "ComplexNumber: " << complexShow << endl;
+                break;
+
+            case 4:
+                cout << "ComplexNumber: " << complexShow << endl;
+                cout << "ComplexNumber--" << endl;
+                complexShow--;
+                cout << "ComplexNumber: " << complexShow << endl;
+                break;
+
+            case 5:
+                cout << "Example of overloading << :" << endl;
+                cout << number << endl;
+                break;
+            case 6:
+                if (matrix1 == matrix2)
+                    cout << "The same\n";
+                else
+                    cout << "Not the same\n";
+                break;
+            case 7:
+                matrix1 = matrix2;
+                resultMatrixRavno = matrix1;
+                cout << endl << "Result matrix:" << endl << endl;
+                resultMatrixRavno.PrintMatrix(size);
+                break;
+            case 8:
+                cout << "ComplexNumber: " << result << endl;
+                cout << "ComplexNumber(int)" << endl;
+                (int)result;
+                cout << "ComplexNumber: " << (int)result << endl;
+                break;
+            default:
+                break;
+            }
             break;
-        else cout << "Wrong number of the automobiles" << endl; // если число автомобилей неправильное
-    }
-
-    Automobile* car = new Automobile[carNumber];
-    Sto sto;
-    double _mileage = 0;
-    for (int i = 0; i < carNumber; i++) // пока не введём информацию для всех машин(количество carNum)
-    {
-        string _name;
-        int _id;
-        while (true)
-        {
-            rewind(stdin);
-            cout << "Please, enter id: ";
-            if ((cin >> _id) && _id >= 1 && !cin.fail())
-                break;
-            cin.clear();
-            cin.ignore(32767, '\n');
+        case 2:
+            cout << "Matrix 1:" << endl << endl;
+            matrix1.PrintMatrix(size);
+            cout << endl << endl << "Matrix 2:" << endl << endl;
+            matrix2.PrintMatrix(size);
+            break;
+        default:
+            break;
         }
-       
-
-        car[i].setId(_id);
-        cout << "Car's mileage: " << endl;
-        _mileage = inputMileage(_mileage);
-        sto.setMileage(car[i], _mileage);
-        cout << "name:" << endl;
-        cin >> _name;
-        car[i].setName(_name);
-    }
-
-    for (int i = 0; i < carNumber; i++)
-    {
-        cout << "Num - " << i + 1 << endl; // номер машины в списке
-        printInfo(car[i]);
-    }
-
-    cout << "Do you want to change sb mileage ?" << endl // если хотим поменять пробег в какой-то машине
-        << "1 - yes, 0 - no" << endl;
-
-    int oneortwo = 0;
-    cin >> oneortwo; // вводим 1 или 0
-    while (oneortwo != 1 && oneortwo != 0)
-    {
-        cout << "Wrong number, try again" << endl;
-        cout << "1 - yes, 0 - no" << endl;
-        fflush(stdin); // 
-        cin >> oneortwo;
-    }
-    if (oneortwo == 1)
-    {
-        //cin.clear();
-        int num = checkNumber(car, carNumber) - 1; // функция на праверку ввода номера автомобиля в списке
-        _mileage = inputMileage(_mileage);
-        sto.setMileage(car[num], _mileage);
-    }
-
-    cout << "Edited:" << endl
-        << endl;
-    for (int i = 0; i < carNumber; i++)
-    {
-        cout << "Number - " << i + 1 << endl; // вывод номера автомобиля
-        printInfo(car[i]); // функция вывода всей информации о машине
-    }
-    delete[] car; //уничтожение car после вывода, т.к. выводится информация о следующей машине
+    } while (menuchoice != 3);
     return 0;
-}
-
-int checkNumber(Automobile* car, int carNumber)// функция проверки на ввод номера автомобиля в списке
-{
-    int n = 0;
-
-    while (true)
-    {
-        cout << "Choose num of editable auto" << endl;
-        fflush(stdin); // если число отрицательное вводим заново
-        // ввод  машин и присваивание этого значения в carNum
-        while (!(cin >> n))
-        {
-            cin.clear();
-            cin.ignore(cin.rdbuf()->in_avail());
-            cout << "Incorrect : ";
-        }
-        cout << "change mileage" << endl;
-        if (n - 1 < 0 || n - 1 > carNumber) {// проверка на ввод (что число положительное и не равно 0)
-            cout << "Wrong number, try again" << endl;
-        }
-        else break; // если число автомобилей неправильное
-    }
-    return n;
 }
